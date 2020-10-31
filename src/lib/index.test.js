@@ -1,4 +1,4 @@
-import { findPracitionerAppointments, findAppointmentsBetween, summarise, summariseFinancials } from './'
+import { findPracitionerAppointments, findAppointmentsBetween, summarise, summariseFinancials, searchPractitioner } from './'
 
 describe('findPracitionerAppointments', () => {
   it('returns a practitioners appointments only', () => {
@@ -106,5 +106,33 @@ describe('summariseFinancials', () => {
       revenue: 300,
       cost: 150
     })
+  })
+})
+
+
+describe('searchPractitioner', () => {
+  it('return list practitioner names which are similar', () => {
+    const practitioners = [
+      {
+        name: 'Michael McIntyre'
+      },
+      {
+        name: 'Michael Jordan'
+      },
+      {
+        name: 'Kobe Byrant'
+      }
+    ]
+
+    expect(searchPractitioner(practitioners, 'Mich')).toEqual(
+      expect.arrayContaining([      
+        expect.objectContaining({ 
+          name: 'Michael McIntyre'
+        }),
+        expect.objectContaining({ 
+          name: 'Michael Jordan'
+        })
+      ])
+    )
   })
 })
