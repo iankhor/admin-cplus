@@ -34,6 +34,13 @@ export function summarise(appointments) {
   }, init)
 }
 
+export function findAppointments(appointments, practitionerId, options) {
+  const practitionerAppointments = findPracitionerAppointments(practitionerId, appointments)
+  const appointmentsDateRange = findAppointmentsBetween(options.startDate, options.endDate, practitionerAppointments)
+
+  return appointmentsDateRange
+}
+
 export function summariseFinancials(appointments, practitionerId, options) {
   const practitionerAppointments = findPracitionerAppointments(practitionerId, appointments)
   const appointmentsDateRange = findAppointmentsBetween(options.startDate, options.endDate, practitionerAppointments)

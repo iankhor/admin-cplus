@@ -3,7 +3,7 @@ import { Container, ListGroup, Button, Table } from 'react-bootstrap'
 import practitioners from './../data/practitioners.json'
 import appointments from './../data/appointments.json'
 import { formatISO } from 'date-fns'
-import { summariseFinancials, findPracitioner } from './../lib'
+import { summariseFinancials, findPracitioner, findPracitionerAppointments, findAppointments } from './../lib'
 
 import DayPickerInput from 'react-day-picker/DayPickerInput'
 import 'react-day-picker/lib/style.css'
@@ -13,6 +13,7 @@ export default function App() {
   const [startDate, setStartDate] = useState(null)
   const [endDate, setEndDate] = useState(null)
   const [financials, setFinancials] = useState([])
+  const [selectedAppointments, setSelectedAppointments] = useState([])
 
   function generateFinancials() {
     const financials = selected.map((practitionerId) => {
@@ -68,7 +69,16 @@ export default function App() {
         <tbody>
           {financials.map((f) => {
             return (
-              <tr>
+              <tr
+                onClick={() =>
+                  setSelectedAppointments(
+                    findAppointments(appointments, f.practitionerId, {
+                      startDate: formatISO(startDate, { representation: 'date' }),
+                      endDate: formatISO(endDate, { representation: 'date' }),
+                    })
+                  )
+                }
+              >
                 <td>{f.practitionerName}</td>
                 <td>{f.revenue.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
                 <td>{f.cost.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
@@ -78,6 +88,37 @@ export default function App() {
           })}
         </tbody>
       </Table>
+      <hr />
+      {
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Client name</th>
+              <th>Appointment type</th>
+              <th>Duration</th>
+              <th>Cost</th>
+              <th>Revenue</th>
+              <th>Gross Profit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {selectedAppointments.map((a) => {
+              return (
+                <tr>
+                  <td>{a.date}</td>
+                  <td>{a.client_name}</td>
+                  <td>{a.appointment_type}</td>
+                  <td>{a.duration}</td>
+                  <td>{a.revenue.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+                  <td>{a.cost.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+                  <td>{(a.revenue - a.cost).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </Table>
+      }
     </Container>
   )
 }
