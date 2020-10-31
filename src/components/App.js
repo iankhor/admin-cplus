@@ -1,42 +1,26 @@
-import React, { Component, Suspense } from 'react';
-import './styles/styles.scss'
-import Dashboard from './Dashboard'
+import React, { Component, useState } from 'react'
+import { Container, ListGroup } from 'react-bootstrap'
+import practitioners from './../data/practitioners.json'
 
-import { CContainer, CHeader, CHeaderNav, CHeaderNavItem } from '@coreui/react'
+//
 
-const loading = (
-  <div className="pt-3 text-center">
-    <div className="sk-spinner sk-spinner-pulse"></div>
-  </div>
-)
+export default function App() {
+  const [selected, setSelected] = useState([])
 
-class App extends Component {
-
-  render() {
-    return (
-      <div className="c-app c-default-layout">
-        <div className="c-wrapper">
-          <CHeader withSubheader>
-            <CHeaderNav className="d-md-down-none mr-auto">
-              <CHeaderNavItem className="px-3" >
-                hello world
-              </CHeaderNavItem>
-            </CHeaderNav>
-          </CHeader>
-
-          <div className="c-body">
-            <main className="c-main">
-              <CContainer fluid>
-                <Suspense fallback={loading}>
-                  <Dashboard />
-                </Suspense>
-              </CContainer>
-            </main>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  return (
+    <Container>
+      <ListGroup as="ul">
+        {practitioners.map((p) => (
+          <ListGroup.Item
+            key={p.id}
+            as="li"
+            onClick={() => setSelected([...new Set([...selected, p.id])])}
+            active={selected.includes(p.id)}
+          >
+            {p.name}
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+    </Container>
+  )
 }
-
-export default App;
