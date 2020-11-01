@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { Container, ListGroup, Button, Table } from 'react-bootstrap'
 import practitioners from './../data/practitioners.json'
 import appointments from './../data/appointments.json'
-import { formatISO } from 'date-fns'
-import { summariseFinancials, findPracitioner, findPracitionerAppointments, findAppointments } from './../lib'
+import { formatISO, isValid } from 'date-fns'
+import { summariseFinancials, findPracitioner, findAppointments } from './../lib'
 
 import DayPickerInput from 'react-day-picker/DayPickerInput'
 import 'react-day-picker/lib/style.css'
@@ -14,6 +14,13 @@ export default function App() {
   const [endDate, setEndDate] = useState(null)
   const [financials, setFinancials] = useState([])
   const [selectedAppointments, setSelectedAppointments] = useState([])
+  const [isError, setIsError] = useState(false)
+
+  function validate() {
+    const valid = isValid(startDate) && isValid(endDate)
+
+    valid ? generateFinancials() : setIsError(true)
+  }
 
   function generateFinancials() {
     const financials = selected.map((practitionerId) => {
@@ -52,9 +59,11 @@ export default function App() {
       <p>End date</p>
       <DayPickerInput onDayChange={(day) => setEndDate(day)} />
 
-      <Button variant="primary" onClick={generateFinancials}>
+      <Button variant="primary" onClick={validate}>
         Generate Report
       </Button>
+
+      {isError && <div>Select a valid start and end date</div>}
 
       <hr />
       <Table striped bordered hover>
@@ -103,6 +112,7 @@ export default function App() {
             </tr>
           </thead>
           <tbody>
+            {selectedAppointments.length === 0 && <div>No appointments found</div>}
             {selectedAppointments.map((a) => {
               return (
                 <tr>
