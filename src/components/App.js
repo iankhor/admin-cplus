@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { Container, ListGroup, Button, Table, Row, Col, Navbar } from 'react-bootstrap'
-import practitioners from './../data/practitioners.json'
-import appointments from './../data/appointments.json'
+// import practitioners from './../data/practitioners.json'
+// import appointments from './../data/appointments.json'
 import { formatISO, isValid, format as dateFormat, parse as dateParse } from 'date-fns'
 import { summariseFinancials, findPracitioner, findAppointments } from './../lib'
 
 import DayPickerInput from 'react-day-picker/DayPickerInput'
 import 'react-day-picker/lib/style.css'
 
-export default function App() {
+export default function App({ practitioners, appointments }) {
   const [selected, setSelected] = useState([])
   const [startDate, setStartDate] = useState(null)
   const [endDate, setEndDate] = useState(null)
@@ -89,7 +89,7 @@ export default function App() {
                       return isValid(parsed) ? parsed : null
                     }}
                     formatDate={(date, format) => dateFormat(date, format)}
-                    placeholder={'mm/dd/yyyy '}
+                    placeholder={'Enter start date'}
                   />
                   <p>End date</p>
                   <DayPickerInput
@@ -103,7 +103,7 @@ export default function App() {
                     }}
                     format={'MM/dd/yyyy'}
                     formatDate={(date, format) => dateFormat(date, format)}
-                    placeholder={'mm/dd/yyyy'}
+                    placeholder={'Enter end date'}
                   />
                   {isError && <div>Select a valid start and end date</div>}
                 </Col>
@@ -125,7 +125,7 @@ export default function App() {
                 <Button variant="secondary" onClick={reset}>
                   Back to search
                 </Button>
-                <Table striped bordered hover>
+                <Table striped bordered hover title="financial summary">
                   <thead>
                     <tr>
                       <th>Practitioner Name</th>
@@ -138,6 +138,7 @@ export default function App() {
                     {financials.map((f) => {
                       return (
                         <tr
+                          key={f.practitionerId}
                           onClick={() =>
                             setSelectedAppointments(
                               findAppointments(appointments, f.practitionerId, {
@@ -164,7 +165,7 @@ export default function App() {
             <Row>
               <Col>
                 {selectedAppointments.length > 0 && (
-                  <Table striped bordered hover>
+                  <Table striped bordered hover title="appointments">
                     <thead>
                       <tr>
                         <th>Date</th>
@@ -180,7 +181,7 @@ export default function App() {
                       {selectedAppointments.length === 0 && <div>No appointments found</div>}
                       {selectedAppointments.map((a) => {
                         return (
-                          <tr>
+                          <tr key={a.appointment_type}>
                             <td>{a.date}</td>
                             <td>{a.client_name}</td>
                             <td>{a.appointment_type}</td>
