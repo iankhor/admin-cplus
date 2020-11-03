@@ -4,16 +4,7 @@ import DayPickerInput from 'react-day-picker/DayPickerInput'
 import 'react-day-picker/lib/style.css'
 import { isValid, format as dateFormat, parse as dateParse } from 'date-fns'
 
-export default function FinancialReportFilter({
-  show,
-  practitioners,
-  selected,
-  setSelected,
-  setStartDate,
-  setEndDate,
-  isError,
-  validate,
-}) {
+export default function FinancialReportFilter({ show, practitioners, validate, dispatch, state }) {
   return (
     <>
       {show && (
@@ -25,8 +16,8 @@ export default function FinancialReportFilter({
                 <ListGroup.Item
                   key={p.id}
                   as="li"
-                  onClick={() => setSelected([...new Set([...selected, p.id])])}
-                  active={selected.includes(p.id)}
+                  onClick={() => dispatch({ type: 'selectPractitioner', practitionerId: p.id })}
+                  active={state.practitioners.includes(p.id)}
                 >
                   {p.name}
                 </ListGroup.Item>
@@ -38,7 +29,7 @@ export default function FinancialReportFilter({
               <Col>
                 <p>Start date</p>
                 <DayPickerInput
-                  onDayChange={(day) => setStartDate(day)}
+                  onDayChange={(day) => dispatch({ type: 'date', property: 'startDate', value: day })}
                   dayPickerProps={{
                     initialMonth: new Date(2017, 12),
                   }}
@@ -52,7 +43,7 @@ export default function FinancialReportFilter({
                 />
                 <p>End date</p>
                 <DayPickerInput
-                  onDayChange={(day) => setEndDate(day)}
+                  onDayChange={(day) => dispatch({ type: 'date', property: 'endDate', value: day })}
                   dayPickerProps={{
                     initialMonth: new Date(2017, 12),
                   }}
@@ -64,7 +55,7 @@ export default function FinancialReportFilter({
                   formatDate={(date, format) => dateFormat(date, format)}
                   placeholder={'Enter end date'}
                 />
-                {isError && <div>Select a valid start and end date</div>}
+                {state.error && <div>Select a valid start and end date</div>}
               </Col>
             </Row>
             <Row className="py-3">

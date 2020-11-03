@@ -3,15 +3,7 @@ import { Button, Table, Row, Col } from 'react-bootstrap'
 import { findAppointments } from '../../../lib'
 import { formatISO } from 'date-fns'
 
-export default function FinancialReport({
-  show,
-  reset,
-  financials,
-  appointments,
-  startDate,
-  endDate,
-  setSelectedAppointments,
-}) {
+export default function FinancialReport({ show, reset, financials, startDate, endDate, dispatch }) {
   return (
     <>
       {show && (
@@ -35,12 +27,7 @@ export default function FinancialReport({
                     <tr
                       key={f.practitionerId}
                       onClick={() =>
-                        setSelectedAppointments(
-                          findAppointments(appointments, f.practitionerId, {
-                            startDate: formatISO(startDate, { representation: 'date' }),
-                            endDate: formatISO(endDate, { representation: 'date' }),
-                          })
-                        )
+                        dispatch({ type: 'appointments', practitionerId: f.practitionerId, startDate, endDate })
                       }
                     >
                       <td>{f.practitionerName}</td>

@@ -1,48 +1,34 @@
-import React, { useState } from 'react'
+import React, { useState, useReducer } from 'react'
 import { Container } from 'react-bootstrap'
 import { formatISO, isValid } from 'date-fns'
 import { summariseFinancials, findPracitioner } from '../../lib'
 
 import { AppointmentsSummary, NavigationBar, FinancialReport, FinancialReportFilter } from './components'
 
+import { initFilterState, filterReducer, initReportState, reportReducer } from './state'
+
 export default function App({ practitioners, appointments }) {
-  const [selected, setSelected] = useState([])
-  const [startDate, setStartDate] = useState(null)
-  const [endDate, setEndDate] = useState(null)
-  const [financials, setFinancials] = useState([])
-  const [selectedAppointments, setSelectedAppointments] = useState([])
-  const [isError, setIsError] = useState(false)
+  const [filterState, filterDispatch] = useReducer(filterReducer, initFilterState)
+  const [reportState, reportDispatch] = useReducer(reportReducer, { appointments, practitioners }, initReportState)
 
   function reset() {
-    setSelected([])
-    setStartDate(null)
-    setEndDate(null)
-    setFinancials([])
-    setSelectedAppointments([])
-    setIsError(false)
+    filterDispatch({ type: 'reset' })
+    reportDispatch({ type: 'reset' })
   }
 
   function validate() {
-    const valid = isValid(startDate) && isValid(endDate)
+    const valid = isValid(filterState.dateRange.startDate) && isValid(filterState.dateRange.endDate)
 
-    valid ? generateFinancials() : setIsError(true)
-  }
-
-  function generateFinancials() {
-    const financials = selected.map((practitionerId) => {
-      const summary = summariseFinancials(appointments, practitionerId, {
-        startDate: formatISO(startDate, { representation: 'date' }),
-        endDate: formatISO(endDate, { representation: 'date' }),
+    if (valid) {
+      reportDispatch({
+        type: 'financials',
+        practitionerIds: filterState.practitioners,
+        startDate: filterState.dateRange.startDate,
+        endDate: filterState.dateRange.endDate,
       })
-
-      return {
-        practitionerId,
-        practitionerName: findPracitioner(practitionerId, practitioners).name,
-        ...summary,
-      }
-    })
-
-    setFinancials(financials)
+    } else {
+      filterDispatch({ type: 'error' })
+    }
   }
 
   return (
@@ -51,27 +37,28 @@ export default function App({ practitioners, appointments }) {
 
       <Container className="mt-3">
         <FinancialReportFilter
-          show={financials.length === 0}
+          show={reportState.financials.length === 0}
           practitioners={practitioners}
-          selected={selected}
-          setSelected={setSelected}
-          setStartDate={setStartDate}
-          setEndDate={setEndDate}
-          isError={isError}
+          isError={filterState.error}
           validate={validate}
+          dispatch={filterDispatch}
+          state={filterState}
         />
 
         <FinancialReport
-          show={financials.length > 0}
+          show={reportState.financials.length > 0}
           reset={reset}
-          financials={financials}
-          appointments={appointments}
-          startDate={startDate}
-          endDate={endDate}
-          setSelectedAppointments={setSelectedAppointments}
+          financials={reportState.financials}
+          startDate={filterState.dateRange.startDate}
+          endDate={filterState.dateRange.endDate}
+          dispatch={reportDispatch}
+          state={reportState}
         />
 
-        <AppointmentsSummary show={financials.length > 0} selectedAppointments={selectedAppointments} />
+        <AppointmentsSummary
+          show={reportState.financials.length > 0}
+          selectedAppointments={reportState.appointmentsForReview}
+        />
       </Container>
     </>
   )
