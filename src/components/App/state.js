@@ -48,6 +48,7 @@ export function reportReducer(state, action) {
     case 'appointments':
       return {
         ...state,
+        practitionerNameUnderReview: findPracitioner(action.practitionerId, state.practitioners).name,
         appointmentsForReview: buildAppointmentsForReview(
           action.practitionerId,
           state.appointments,
@@ -56,7 +57,7 @@ export function reportReducer(state, action) {
         ),
       }
     case 'reset':
-      return initReportState
+      return initReportState({ appointments: state.appointments, practitioners: state.practitioners })
     default:
       return state
   }

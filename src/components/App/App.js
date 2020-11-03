@@ -3,7 +3,6 @@ import { Container } from 'react-bootstrap'
 import { isValid } from 'date-fns'
 
 import { AppointmentsSummary, NavigationBar, FinancialReport, FinancialReportFilter } from './components'
-
 import { initFilterState, filterReducer, initReportState, reportReducer } from './state'
 
 export default function App({ practitioners, appointments }) {
@@ -68,7 +67,11 @@ export default function App({ practitioners, appointments }) {
           review={reviewAppointments}
         />
 
-        <AppointmentsSummary show={hasFinancialReport} selectedAppointments={reportState.appointmentsForReview} />
+        <AppointmentsSummary
+          show={hasFinancialReport}
+          practitionerNameUnderReview={reportState.practitionerNameUnderReview}
+          selectedAppointments={reportState.appointmentsForReview}
+        />
       </Container>
     </>
   )
