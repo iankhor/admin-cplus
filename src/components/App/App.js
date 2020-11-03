@@ -1,7 +1,6 @@
-import React, { useState, useReducer } from 'react'
+import React, { useReducer } from 'react'
 import { Container } from 'react-bootstrap'
-import { formatISO, isValid } from 'date-fns'
-import { summariseFinancials, findPracitioner } from '../../lib'
+import { isValid } from 'date-fns'
 
 import { AppointmentsSummary, NavigationBar, FinancialReport, FinancialReportFilter } from './components'
 
@@ -31,6 +30,10 @@ export default function App({ practitioners, appointments }) {
     }
   }
 
+  function onDateChange(type) {
+    return (day) => reportDispatch({ type: 'date', property: type, value: day })
+  }
+
   return (
     <>
       <NavigationBar />
@@ -43,6 +46,7 @@ export default function App({ practitioners, appointments }) {
           validate={validate}
           dispatch={filterDispatch}
           state={filterState}
+          onDateChange={onDateChange}
         />
 
         <FinancialReport

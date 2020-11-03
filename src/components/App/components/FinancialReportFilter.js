@@ -4,7 +4,28 @@ import DayPickerInput from 'react-day-picker/DayPickerInput'
 import 'react-day-picker/lib/style.css'
 import { isValid, format as dateFormat, parse as dateParse } from 'date-fns'
 
-export default function FinancialReportFilter({ show, practitioners, validate, dispatch, state }) {
+function DatePick({ title, onDayChange, placeholder }) {
+  return (
+    <>
+      <p>{title}</p>
+      <DayPickerInput
+        onDayChange={onDayChange}
+        dayPickerProps={{
+          initialMonth: new Date(2017, 12),
+        }}
+        format={'MM/dd/yyyy'}
+        parseDate={(date, format) => {
+          const parsed = dateParse(date, 'MM/dd/yyyy', new Date())
+          return isValid(parsed) ? parsed : null
+        }}
+        formatDate={(date, format) => dateFormat(date, format)}
+        placeholder={placeholder}
+      />
+    </>
+  )
+}
+
+export default function FinancialReportFilter({ show, practitioners, validate, dispatch, state, onDateChange }) {
   return (
     <>
       {show && (
@@ -27,33 +48,15 @@ export default function FinancialReportFilter({ show, practitioners, validate, d
           <Col>
             <Row>
               <Col>
-                <p>Start date</p>
-                <DayPickerInput
+                <DatePick
+                  title="Start date"
+                  placeholder="Enter start date"
                   onDayChange={(day) => dispatch({ type: 'date', property: 'startDate', value: day })}
-                  dayPickerProps={{
-                    initialMonth: new Date(2017, 12),
-                  }}
-                  format={'MM/dd/yyyy'}
-                  parseDate={(date, format) => {
-                    const parsed = dateParse(date, 'MM/dd/yyyy', new Date())
-                    return isValid(parsed) ? parsed : null
-                  }}
-                  formatDate={(date, format) => dateFormat(date, format)}
-                  placeholder={'Enter start date'}
                 />
-                <p>End date</p>
-                <DayPickerInput
+                <DatePick
+                  title="End date"
+                  placeholder="Enter end date"
                   onDayChange={(day) => dispatch({ type: 'date', property: 'endDate', value: day })}
-                  dayPickerProps={{
-                    initialMonth: new Date(2017, 12),
-                  }}
-                  parseDate={(date, format) => {
-                    const parsed = dateParse(date, 'MM/dd/yyyy', new Date())
-                    return isValid(parsed) ? parsed : null
-                  }}
-                  format={'MM/dd/yyyy'}
-                  formatDate={(date, format) => dateFormat(date, format)}
-                  placeholder={'Enter end date'}
                 />
                 {state.error && <div>Select a valid start and end date</div>}
               </Col>
