@@ -1,7 +1,7 @@
 import App from './App'
 import { render, screen, within } from '@testing-library/react'
 import user from '@testing-library/user-event'
-import { buildAppointment } from '../testLib'
+import { buildAppointment } from '../../testLib'
 
 describe('<App />', () => {
   describe('searching a summary financial report of multiple practitioners', () => {
