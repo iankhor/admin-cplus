@@ -53,3 +53,7 @@ export function searchPractitioner(practitioners, searchString) {
 
   return fuse.search(searchString).map((p) => p.item)
 }
+
+export function formatCurrency(value) {
+  return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+}

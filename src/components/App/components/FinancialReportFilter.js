@@ -7,25 +7,38 @@ import { isValid, format as dateFormat, parse as dateParse } from 'date-fns'
 function DatePick({ title, onDayChange, placeholder }) {
   return (
     <>
-      <p>{title}</p>
-      <DayPickerInput
-        onDayChange={onDayChange}
-        dayPickerProps={{
-          initialMonth: new Date(2017, 12),
-        }}
-        format={'MM/dd/yyyy'}
-        parseDate={(date, format) => {
-          const parsed = dateParse(date, 'MM/dd/yyyy', new Date())
-          return isValid(parsed) ? parsed : null
-        }}
-        formatDate={(date, format) => dateFormat(date, format)}
-        placeholder={placeholder}
-      />
+      <Row>
+        <Col md={3}>
+          <label>{title}</label>
+        </Col>
+        <Col>
+          <DayPickerInput
+            onDayChange={onDayChange}
+            dayPickerProps={{
+              initialMonth: new Date(2017, 12),
+            }}
+            format={'MM/dd/yyyy'}
+            parseDate={(date, format) => {
+              const parsed = dateParse(date, 'MM/dd/yyyy', new Date())
+              return isValid(parsed) ? parsed : null
+            }}
+            formatDate={(date, format) => dateFormat(date, format)}
+            placeholder={placeholder}
+          />
+        </Col>
+      </Row>
     </>
   )
 }
 
-export default function FinancialReportFilter({ show, practitioners, validate, dispatch, state, onDateChange }) {
+export default function FinancialReportFilter({
+  show,
+  isPractitionerSelected,
+  practitioners,
+  validate,
+  dispatch,
+  isError,
+}) {
   return (
     <>
       {show && (
@@ -38,7 +51,7 @@ export default function FinancialReportFilter({ show, practitioners, validate, d
                   key={p.id}
                   as="li"
                   onClick={() => dispatch({ type: 'selectPractitioner', practitionerId: p.id })}
-                  active={state.practitioners.includes(p.id)}
+                  active={isPractitionerSelected(p.id)}
                 >
                   {p.name}
                 </ListGroup.Item>
@@ -58,10 +71,11 @@ export default function FinancialReportFilter({ show, practitioners, validate, d
                   placeholder="Enter end date"
                   onDayChange={(day) => dispatch({ type: 'date', property: 'endDate', value: day })}
                 />
-                {state.error && <div>Select a valid start and end date</div>}
+                {isError && <div>Select a valid start and end date</div>}
               </Col>
             </Row>
-            <Row className="py-3">
+            <Row className="py-2">
+              <Col md={3} />
               <Col>
                 <Button variant="primary" onClick={validate}>
                   Generate Report

@@ -10,10 +10,7 @@ export default function App({ practitioners, appointments }) {
   const [filterState, filterDispatch] = useReducer(filterReducer, initFilterState)
   const [reportState, reportDispatch] = useReducer(reportReducer, { appointments, practitioners }, initReportState)
 
-  function reset() {
-    filterDispatch({ type: 'reset' })
-    reportDispatch({ type: 'reset' })
-  }
+  const hasFinancialReport = reportState.financials.length > 0
 
   function validate() {
     const valid = isValid(filterState.dateRange.startDate) && isValid(filterState.dateRange.endDate)
@@ -30,8 +27,23 @@ export default function App({ practitioners, appointments }) {
     }
   }
 
-  function onDateChange(type) {
-    return (day) => reportDispatch({ type: 'date', property: type, value: day })
+  function reviewAppointments(practitionerId) {
+    return () =>
+      reportDispatch({
+        type: 'appointments',
+        practitionerId: practitionerId,
+        startDate: filterState.dateRange.startDate,
+        endDate: filterState.dateRange.endDate,
+      })
+  }
+
+  function isPractitionerSelected(practitionerId) {
+    return filterState.practitioners.includes(practitionerId)
+  }
+
+  function reset() {
+    filterDispatch({ type: 'reset' })
+    reportDispatch({ type: 'reset' })
   }
 
   return (
@@ -40,29 +52,23 @@ export default function App({ practitioners, appointments }) {
 
       <Container className="mt-3">
         <FinancialReportFilter
-          show={reportState.financials.length === 0}
-          practitioners={practitioners}
+          show={!hasFinancialReport}
+          practitioners={reportState.practitioners}
+          isPractitionerSelected={isPractitionerSelected}
           isError={filterState.error}
           validate={validate}
           dispatch={filterDispatch}
-          state={filterState}
-          onDateChange={onDateChange}
         />
 
         <FinancialReport
-          show={reportState.financials.length > 0}
+          show={hasFinancialReport}
           reset={reset}
           financials={reportState.financials}
-          startDate={filterState.dateRange.startDate}
-          endDate={filterState.dateRange.endDate}
-          dispatch={reportDispatch}
-          state={reportState}
+          period={filterState.dateRange}
+          review={reviewAppointments}
         />
 
-        <AppointmentsSummary
-          show={reportState.financials.length > 0}
-          selectedAppointments={reportState.appointmentsForReview}
-        />
+        <AppointmentsSummary show={hasFinancialReport} selectedAppointments={reportState.appointmentsForReview} />
       </Container>
     </>
   )

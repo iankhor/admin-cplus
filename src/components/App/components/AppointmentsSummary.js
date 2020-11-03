@@ -1,5 +1,6 @@
 import React from 'react'
 import { Table, Row, Col } from 'react-bootstrap'
+import { formatCurrency } from '../../../lib'
 
 export default function AppointmentsSummary({ show, selectedAppointments }) {
   return (
@@ -30,11 +31,9 @@ export default function AppointmentsSummary({ show, selectedAppointments }) {
                           <td>{a.client_name}</td>
                           <td>{a.appointment_type}</td>
                           <td>{a.duration}</td>
-                          <td>{a.revenue.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
-                          <td>{a.cost.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
-                          <td>
-                            {(a.revenue - a.cost).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
-                          </td>
+                          <td>{formatCurrency(a.revenue)}</td>
+                          <td>{formatCurrency(a.cost)}</td>
+                          <td>{formatCurrency(a.revenue - a.cost)}</td>
                         </tr>
                       )
                     })}
