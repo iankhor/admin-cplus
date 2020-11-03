@@ -3,15 +3,6 @@ import { Button, Table, Row, Col } from 'react-bootstrap'
 import { formatCurrency } from '../../../lib'
 import { format as dateFormat } from 'date-fns'
 
-function Header({ startDate, endDate }) {
-  return (
-    <>
-      <h4>Financial Summary</h4>
-      <h5>{`for period of ${dateFormat(startDate, 'MM/dd/yyyy')} to ${dateFormat(endDate, 'MM/dd/yyyy')}`}</h5>
-    </>
-  )
-}
-
 export default function FinancialReport({ show, reset, financials, review, period }) {
   return (
     <>

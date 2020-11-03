@@ -71,12 +71,14 @@ export default function FinancialReportFilter({
                   placeholder="Enter end date"
                   onDayChange={(day) => dispatch({ type: 'date', property: 'endDate', value: day })}
                 />
-                {isError && <div>Select a valid start and end date</div>}
               </Col>
             </Row>
             <Row className="py-2">
               <Col md={3} />
               <Col>
+                {isError && (
+                  <div className="text-danger">Select a valid start/end date and at least one practitioner</div>
+                )}
                 <Button variant="primary" onClick={validate}>
                   Generate Report
                 </Button>

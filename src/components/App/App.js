@@ -12,7 +12,10 @@ export default function App({ practitioners, appointments }) {
   const hasFinancialReport = reportState.financials.length > 0
 
   function validate() {
-    const valid = isValid(filterState.dateRange.startDate) && isValid(filterState.dateRange.endDate)
+    const valid =
+      isValid(filterState.dateRange.startDate) &&
+      isValid(filterState.dateRange.endDate) &&
+      filterState.practitioners.length > 1
 
     if (valid) {
       reportDispatch({
