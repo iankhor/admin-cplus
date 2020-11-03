@@ -1,70 +1,42 @@
-# Getting Started with Create React App
+## ;TLDR
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An app to summarise profitability for the appointments of medical practitioners
 
-## Available Scripts
+Deployed app at [https://admin-cp.herokuapp.com/](https://admin-cp.herokuapp.com/)
 
-In the project directory, you can run:
+---
 
-### `yarn start`
+## Animated demo below
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+![](/docs/demo.gif)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Notes
 
-### `yarn test`
+### Design considerations
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. React will be used as the frontend framework to implement the UI behavior requirements
+2. Based on the requirements, "out-of-the-box" React APIs is adequate (ie: hooks - useReducer) without the need to introduce additional frameworks on top of what React provides. There will be a "filter" state - that manages what filter criterias. Lastly, there will be a "report" state - that consumes the filter criterias to generate the financial report for each practitioner.
+3. Caching is considered when there are many records of practitioner and appoinments to avoid a non-performant UI. Imagine having 100,000 practitioners and each with 100,000 appoitments. Iterating them and calculating financial information on the frontend will be slow.
+4. GraphQL would be an option in this case to handle data caching and pagination when displaying a long list of practitioners or appointments. The frontend now can just query what the UI needs to display. This will make UI performant and a smooth experience for the user.
+5. Another possiblity is to expose a grapqhQL mutation to perform a server side calculation on financial information (ie: cost, revenue and etc) and the frontend only displays it.
+6. [Error boundaries](https://github.com/bvaughn/react-error-boundary) should be placed on react components that fetches data from the server to handle timeouts from a graphQL or server request, in order to display useful error messages to the user.
 
-### `yarn build`
+### Assumptions
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. This is not an UX exercise and focus was placed on demonstrating frontend functionality
+2. Basic UX considerations was applied (ie: filter validation)
+3. This exercise does not demonstrated how data fetching is handled and any server side data (ie: mocked data provider in `src/data`) is assumed passed in as a prop to the App.js (`src/components/App/`) component. A react hook can be easily implemented to handle data fetching requirements for pracitioners and appoinmtents data.
+4. Pagination is not introduced in this exercise as it is not a UX requirement at this stage but would be useful to give an indication to the user how much data is there to look through.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Instructions
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+To run on a your local machine
 
-### `yarn eject`
+1. Clone this repo
+2. run `yarn install`
+3. run `yarn start`
+4. On a browser, go to `localhost:3000`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+To run test
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. run `yarn test`
